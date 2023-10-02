@@ -1,31 +1,71 @@
 import * as React from 'react';
 
-import { StyleSheet, View, Text } from 'react-native';
-import { multiply } from 'react-native-skia-helpers';
+import { Dimensions, StyleSheet } from 'react-native';
+import {
+  Canvas,
+  Group,
+  Path,
+  type SkPath,
+  useComputedValue,
+  useClockValue,
+} from '@shopify/react-native-skia';
+import { SkPathGenerator } from '../../src/skiaApiWrappers/path';
+
+const { width: SW, height: SH } = Dimensions.get('window');
+
+const size = 150;
+const r1 = size / 4;
+const r2 = size / 2;
 
 export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
+  const path1 = SkPathGenerator()
+    .moveTo(0, 0)
+    .rRoundedCornerTo(size, 0, 0)
+    .rRoundedCornerTo(-size, size, 0)
+    .rRoundedCornerTo(0, size, r2)
+    .rRoundedCornerTo(size, 0, ({ defaultCurveHandlerFactor }) => ({
+      r: r2,
+      curveHandlerFactor: defaultCurveHandlerFactor * 0.6,
+    }))
+    .rLineTo(0, -size)
+    .getSkPath();
 
-  React.useEffect(() => {
-    multiply(3, 7).then(setResult);
-  }, []);
+  const path2 = SkPathGenerator()
+    .moveTo(0, 0)
+    .rRoundedCornerTo(size, 0, r1)
+    .rRoundedCornerTo(-size, size, r2)
+    .rRoundedCornerTo(0, size, r2)
+    .rRoundedCornerTo(size, 0, ({ defaultCurveHandlerFactor }) => ({
+      r: r2,
+      curveHandlerFactor: defaultCurveHandlerFactor * 1.3,
+    }))
+    .rLineTo(0, -size)
+    .getSkPath();
+
+  const clock = useClockValue();
+  const pathToDisplay = useComputedValue<SkPath>(() => {
+    const progress = Math.sin(clock.current / 1000) / 2 + 0.5;
+    return path2.interpolate(path1, progress)!;
+  }, [clock]);
 
   return (
-    <View style={styles.container}>
-      <Text>Result: {result}</Text>
-    </View>
+    <Canvas style={styles.canvas}>
+      <Group transform={[{ translateX: 100 }, { translateY: 100 }]}>
+        <Path
+          path={pathToDisplay}
+          style="stroke"
+          color="white"
+          strokeWidth={2}
+        />
+      </Group>
+    </Canvas>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
+  canvas: {
+    width: SW,
+    height: SH,
+    backgroundColor: 'green',
   },
 });

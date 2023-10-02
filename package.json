@@ -1,7 +1,7 @@
 {
   "name": "react-native-skia-helpers",
   "version": "0.1.0",
-  "description": "extend the functionality of react-native-skia",
+  "description": "extends the functionality of react-native-skia",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/src/index.d.ts",
@@ -54,6 +54,7 @@
     "@evilmartians/lefthook": "^1.5.0",
     "@react-native/eslint-config": "^0.72.2",
     "@release-it/conventional-changelog": "^5.0.0",
+    "@shopify/react-native-skia": "0.1.212",
     "@types/jest": "^28.1.2",
     "@types/react": "~17.0.21",
     "@types/react-native": "0.70.0",
@@ -74,6 +75,7 @@
     "@types/react": "17.0.21"
   },
   "peerDependencies": {
+    "@shopify/react-native-skia": ">=0.1.212",
     "react": "*",
     "react-native": "*"
   },

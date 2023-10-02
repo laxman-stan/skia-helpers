@@ -1,26 +1,31 @@
 {
-  "name": "react-native-skia-helpers-example",
-  "version": "1.0.0",
-  "main": "node_modules/expo/AppEntry.js",
+  "name": "react-native-slm-example",
+  "version": "0.0.1",
+  "private": true,
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "rc": "react-native start --reset-cache",
+    "build:android": "cd android && ./gradlew assembleDebug --no-daemon --console=plain -PreactNativeArchitectures=arm64-v8a",
+    "build:ios": "cd ios && xcodebuild -workspace SlmExample.xcworkspace -scheme SlmExample -configuration Debug -sdk iphonesimulator CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ GCC_OPTIMIZATION_LEVEL=0 GCC_PRECOMPILE_PREFIX_HEADER=YES ASSETCATALOG_COMPILER_OPTIMIZATION=time DEBUG_INFORMATION_FORMAT=dwarf COMPILER_INDEX_STORE_ENABLE=NO"
   },
   "dependencies": {
-    "expo": "~49.0.13",
-    "expo-status-bar": "~1.6.0",
+    "@shopify/react-native-skia": "0.1.212",
     "react": "18.2.0",
     "react-native": "0.72.5",
-    "react-dom": "18.2.0",
-    "react-native-web": "~0.19.6"
+    "react-native-reanimated": "^3.5.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@babel/preset-env": "^7.20.0",
+    "@babel/runtime": "^7.20.0",
+    "@react-native/metro-config": "^0.72.11",
     "babel-plugin-module-resolver": "^5.0.0",
-    "@expo/webpack-config": "^18.0.1",
-    "babel-loader": "^8.1.0"
+    "metro-react-native-babel-preset": "0.76.8",
+    "pod-install": "^0.1.0"
   },
-  "private": true
+  "engines": {
+    "node": ">=16"
+  }
 }

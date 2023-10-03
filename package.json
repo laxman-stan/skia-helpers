@@ -1,29 +1,12 @@
 {
   "name": "react-native-skia-helpers",
-  "version": "0.2.3",
+  "version": "0.0.0-local.1",
   "description": "extends the functionality of react-native-skia",
   "main": "lib/commonjs/index",
-  "module": "lib/module/index",
   "types": "lib/typescript/src/index.d.ts",
   "react-native": "src/index",
-  "source": "src/index",
   "files": [
-    "src",
-    "lib",
-    "android",
-    "ios",
-    "cpp",
-    "*.podspec",
-    "!ios/build",
-    "!android/build",
-    "!android/gradle",
-    "!android/gradlew",
-    "!android/gradlew.bat",
-    "!android/local.properties",
-    "!**/__tests__",
-    "!**/__fixtures__",
-    "!**/__mocks__",
-    "!**/.*"
+    "lib/**/*"
   ],
   "scripts": {
     "example": "yarn workspace react-native-skia-helpers-example",

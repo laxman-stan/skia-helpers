@@ -10,21 +10,21 @@ npm install react-native-skia-helpers
 
 ## Example
 
-Currently, we are only exporting `SkPathGenerator` function
+Currently, this library only exports `SkPathGenerator` function
 
 ```typescript
 import * as React from 'react';
 
 import { Dimensions, StyleSheet } from 'react-native';
+import { Canvas, Group, Path, type SkPath } from '@shopify/react-native-skia';
+import { SkPathGenerator } from '../../src/skiaApiWrappers/path';
 import {
-  Canvas,
-  Group,
-  Path,
-  type SkPath,
-  useComputedValue,
-  useClockValue,
-} from '@shopify/react-native-skia';
-import { SkPathGenerator } from 'react-native-skia-helpers';
+  Easing,
+  useDerivedValue,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+} from 'react-native-reanimated';
 
 const { width: SW, height: SH } = Dimensions.get('window');
 
@@ -32,7 +32,7 @@ const size = 150;
 const r1 = size / 4;
 const r2 = size / 2;
 
-export default function App() {
+export default function Example() {
   const path1 = SkPathGenerator()
     .moveTo(0, 0)
     .rRoundedCornerTo(size, 0, 0)
@@ -55,13 +55,21 @@ export default function App() {
       curveHandlerFactor: defaultCurveHandlerFactor * 1.3,
     }))
     .rLineTo(0, -size)
-    .getSkPath(); // this is required to use the path inside Path component
+    .getSkPath();
 
-  const clock = useClockValue();
-  const pathToDisplay = useComputedValue<SkPath>(() => {
-    const progress = Math.sin(clock.current / 1000) / 2 + 0.5;
-    return path2.interpolate(path1, progress)!;
-  }, [clock]);
+  const progress = useSharedValue(0);
+  const pathToDisplay = useDerivedValue<SkPath>(
+    () => path2.interpolate(path1, progress.value)!,
+    [progress]
+  );
+
+  React.useEffect(() => {
+    progress.value = withRepeat(
+      withTiming(1, { duration: 1000, easing: Easing.linear }),
+      -1,
+      true
+    );
+  }, [progress]);
 
   return (
     <Canvas style={styles.canvas}>
@@ -81,13 +89,86 @@ const styles = StyleSheet.create({
   canvas: {
     width: SW,
     height: SH,
-    backgroundColor: 'green',
+    backgroundColor: 'black',
   },
 });
-
 ```
-### Note
-A more detailed documentation is being written.
+
+## SkPathGenerator Documentation
+
+The `SkPathGenerator` is a utility function that is a wrapper around `Skia.Path.Make()` and provide a simplifiy api to apply border radius to path corner much like any vector drawing software.
+
+### Types
+
+#### SkPathGeneratorType
+
+The `SkPathGenerator` is a utility function that serves as a wrapper around `Skia.Path.Make()`, providing a simplified API to apply a border radius to path corners, much like any vector drawing software.
+
+| Method | Type | Description |
+|--------|------|-------------|
+| `moveTo` | `(x: number, y: number) => SkPathGeneratorType` | Moves the starting point of the path to the specified coordinates. |
+| `lineTo` | `(x: number, y: number) => SkPathGeneratorType` | Draws a line from the current point to the specified coordinates. |
+| `rLineTo` | `(x: number, y: number) => SkPathGeneratorType` | Draws a line from the current point to a point that is offset from the current point by the specified coordinates. |
+| `close` | `() => SkPath` | Closes the current path. |
+| **`rRoundedCornerTo`** | `(x: number, y: number, cornerControle?: CornerControle) => RoundedCornerReturn` | Draws a line to the specified coordinates and applies a rounded corner. The corner details are specified by `cornerControle`. |
+| **`roundedCornerTo`** | `(x: number, y: number, cornerControle?: CornerControle) => RoundedCornerReturn` | Similar to `rRoundedCornerTo`, but uses absolute coordinates. |
+| `getSkPath` | `(cornerControle?: CornerControle) => SkPath` | Returns the underlying `SkPath` instance. |
+| `rMoveTo` | `(x: number, y: number) => SkPathGeneratorType` | Moves the starting point of the path by the specified offset from the current point. |
+| `cubicTo` | `(cpx1: number, cpy1: number, cpx2: number, cpy2: number, x: number, y: number) => SkPathGeneratorType` | Adds a cubic Bézier curve to the path. |
+| `quadTo` | `(x1: number, y1: number, x2: number, y2: number) => SkPathGeneratorType` | Adds a quadratic Bézier curve to the path. |
+| ... | ... | Additional methods, similar to those in SkPath, are available. Please refer to the type declaration for a comprehensive list of all methods. |
+
+#### CornerControle
+
+The `CornerControle` type specifies how corners should be rounded and can be one of the following:
+
+- A `number`: Specifies a fixed radius for the rounded corner.
+- `ControleObj`: An object that provides more detailed control over the rounding of the corner.
+- `CurveContrleCb`: A callback function that returns a `ControleObj` and provides dynamic control over the rounding based on the current path.
+
+#### ControleObj
+
+The `ControleObj` type provides detailed control over the rounding of corners and can be one of the following forms:
+
+- `{ r: number; curveHandlerFactor?: number; tangentLength?: undefined }`
+- `{ tangentLength: number; curveHandlerFactor?: number; r?: undefined }`
+
+#### RoundedCornerReturn
+
+The `RoundedCornerReturn` type provides methods to continue the path after a rounded corner has been added.
+
+| Method | Type | Description |
+|--------|------|-------------|
+| `rRoundedCornerTo` | `(x: number, y: number, cornerControle?: CornerControle) => RoundedCornerReturn` | Continues the path with another rounded corner, using relative coordinates. |
+| `roundedCornerTo` | `(x: number, y: number, cornerControle?: CornerControle) => RoundedCornerReturn` | Continues the path with another rounded corner, using absolute coordinates. |
+| `lineTo` | `(x: number, y: number) => SkPathGeneratorType` | Continues the path with a straight line to the specified coordinates. |
+| `rLineTo` | `(x: number, y: number) => SkPathGeneratorType` | Continues the path with a straight line, using coordinates relative to the current point. |
+| `close` | `() => SkPath` | Closes the path with a straight line. |
+
+### Using `path` in the Path Component
+
+In order to utilize the path within the `Path` component, it is necessary to convert it to `SkPath`. This can be achieved in two ways:
+
+#### Method 1: Using \`.getSkPath()\`
+Utilize the `.getSkPath()` method after invoking `SkPathGenerator()`.
+
+```javascript
+const path = SkPathGenerator()
+...
+.getSkPath();
+```
+
+#### Method 2: Using `close()`
+Alternatively, you can use the `.close()` method after \`SkPathGenerator()\`.
+
+```javascript
+const path = SkPathGenerator()
+...
+.close();
+```
+
+
+
 
 
 ## License

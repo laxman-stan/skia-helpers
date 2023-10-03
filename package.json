@@ -21,13 +21,13 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/LaxmanDeadpool/react-native-skia-helpers",
+  "repository": "https://github.com/laxman-stan/skia-helpers",
   "author": "laxman-stan <laxmikant@getstan.app> (https://github.com/laxman-stan)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/LaxmanDeadpool/react-native-skia-helpers/issues"
   },
-  "homepage": "https://github.com/LaxmanDeadpool/react-native-skia-helpers#readme",
+  "homepage": "https://github.com/laxman-stan/skia-helpers#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },

@@ -153,10 +153,10 @@ export function SkPathGenerator(): SkPathGeneratorType {
     const defaultCFactor = calculateCFactor(angle);
 
     const nextDis = dist(cornerPt, nextPt);
-    const maxTangentLength = Math.min(preDis, nextDis);
+    const maxPossibleTangentLength = Math.min(preDis, nextDis);
 
     const tanHa = Math.tan(angle / 2);
-    const maxR = deriveRFromTangent(maxTangentLength, tanHa);
+    const maxR = deriveRFromTangent(maxPossibleTangentLength, tanHa);
 
     let rToApply, cFactorToApply, tangentLengthToApply;
     if (cornerFn) {
@@ -164,12 +164,12 @@ export function SkPathGenerator(): SkPathGeneratorType {
         angle,
         maxPossibleR: maxR,
         defaultCurveHandlerFactor: defaultCFactor,
-        maxTangentLength: maxTangentLength,
+        maxPossibleTangentLength,
       }));
     }
 
     if (isNum(tangentLength)) {
-      tangentLengthToApply = Math.min(tangentLength!, maxTangentLength);
+      tangentLengthToApply = Math.min(tangentLength!, maxPossibleTangentLength);
       rToApply = deriveRFromTangent(tangentLengthToApply, tanHa);
     } else {
       rToApply = Math.min(r ?? 0, maxR);
@@ -270,12 +270,12 @@ export function SkPathGenerator(): SkPathGeneratorType {
         skPathIntance.close();
         return skPathIntance;
       },
-      roundedClose: () => {
-        const asbNextPoint = lastMoveTo;
-        addNextPt(asbNextPoint, true);
-        skPathIntance.close();
-        return skPathIntance;
-      },
+      // roundedClose: () => {
+      //   const asbNextPoint = lastMoveTo;
+      //   addNextPt(asbNextPoint, true);
+      //   skPathIntance.close();
+      //   return skPathIntance;
+      // },
     };
   };
 

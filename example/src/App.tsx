@@ -1,15 +1,15 @@
 import * as React from 'react';
 
 import { Dimensions, StyleSheet } from 'react-native';
-import {
-  Canvas,
-  Group,
-  Path,
-  type SkPath,
-  useComputedValue,
-  useClockValue,
-} from '@shopify/react-native-skia';
+import { Canvas, Group, Path, type SkPath } from '@shopify/react-native-skia';
 import { SkPathGenerator } from '../../src/skiaApiWrappers/path';
+import {
+  Easing,
+  useDerivedValue,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+} from 'react-native-reanimated';
 
 const { width: SW, height: SH } = Dimensions.get('window');
 
@@ -17,7 +17,7 @@ const size = 150;
 const r1 = size / 4;
 const r2 = size / 2;
 
-export default function App() {
+export default function Example() {
   const path1 = SkPathGenerator()
     .moveTo(0, 0)
     .rRoundedCornerTo(size, 0, 0)
@@ -42,11 +42,19 @@ export default function App() {
     .rLineTo(0, -size)
     .getSkPath();
 
-  const clock = useClockValue();
-  const pathToDisplay = useComputedValue<SkPath>(() => {
-    const progress = Math.sin(clock.current / 1000) / 2 + 0.5;
-    return path2.interpolate(path1, progress)!;
-  }, [clock]);
+  const progress = useSharedValue(0);
+  const pathToDisplay = useDerivedValue<SkPath>(
+    () => path2.interpolate(path1, progress.value)!,
+    [progress]
+  );
+
+  React.useEffect(() => {
+    progress.value = withRepeat(
+      withTiming(1, { duration: 1000, easing: Easing.linear }),
+      -1,
+      true
+    );
+  }, [progress]);
 
   return (
     <Canvas style={styles.canvas}>
@@ -66,6 +74,6 @@ const styles = StyleSheet.create({
   canvas: {
     width: SW,
     height: SH,
-    backgroundColor: 'green',
+    backgroundColor: 'black',
   },
 });

@@ -9,7 +9,7 @@ export type CurveContrleCb = (cbObj: {
   angle: number;
   maxPossibleR: number;
   defaultCurveHandlerFactor: number;
-  maxTangentLength: number;
+  maxPossibleTangentLength: number;
 }) => ControleObj;
 
 export type CornerControle = number | ControleObj | CurveContrleCb;
@@ -27,7 +27,7 @@ export type RoundedCornerReturn = {
   ) => RoundedCornerReturn;
   lineTo: (x: number, y: number) => SkPathGeneratorType;
   rLineTo: (x: number, y: number) => SkPathGeneratorType;
-  roundedClose: () => SkPath;
+  // roundedClose: () => SkPath;
   close: () => SkPath;
 };
 

@@ -1,6 +1,6 @@
 {
   "name": "react-native-skia-helpers",
-  "version": "0.0.0-local.1",
+  "version": "0.2.3",
   "description": "extends the functionality of react-native-skia",
   "main": "lib/commonjs/index",
   "types": "lib/typescript/src/index.d.ts",

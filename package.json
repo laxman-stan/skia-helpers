@@ -1,12 +1,11 @@
 {
   "name": "react-native-skia-helpers",
-  "version": "0.2.4",
+  "version": "0.2.4-lc.4",
   "description": "extends the functionality of react-native-skia",
-  "main": "lib/commonjs/index",
+  "main": "lib/module/index.js",
   "types": "lib/typescript/src/index.d.ts",
-  "react-native": "src/index",
   "files": [
-    "lib/**/*"
+    "lib"
   ],
   "scripts": {
     "example": "yarn workspace react-native-skia-helpers-example",

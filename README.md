@@ -17,7 +17,7 @@ import * as React from 'react';
 
 import { Dimensions, StyleSheet } from 'react-native';
 import { Canvas, Group, Path, type SkPath } from '@shopify/react-native-skia';
-import { SkPathGenerator } from '../../src/skiaApiWrappers/path';
+import { SkPathGenerator } from 'react-native-skia-helpers';
 import {
   Easing,
   useDerivedValue,
@@ -144,6 +144,7 @@ The `RoundedCornerReturn` type provides methods to continue the path after a rou
 | `lineTo` | `(x: number, y: number) => SkPathGeneratorType` | Continues the path with a straight line to the specified coordinates. |
 | `rLineTo` | `(x: number, y: number) => SkPathGeneratorType` | Continues the path with a straight line, using coordinates relative to the current point. |
 | `close` | `() => SkPath` | Closes the path with a straight line. |
+
 
 ### Using `path` in the Path Component
 
